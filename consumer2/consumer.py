@@ -24,7 +24,7 @@ kafka_params = {
 topic = ['detect-video']
 
 # Создание DStream для чтения из Kafka
-kafka_stream = KafkaUtils.createDirectStream(ssc, topics, kafka_params)
+kafka_stream = KafkaUtils.createDirectStream(ssc, topic, kafka_params)
 
 # Загрузить модель YOLOv7
 #model = torch.hub.load('WongKinYiu/yolov7', 'custom', path='yolov7-tiny.pt', trust_repo=True)
