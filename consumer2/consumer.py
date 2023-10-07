@@ -3,6 +3,8 @@ import time
 from pyspark.context import SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
+from io import BytesIO
+from PIL import Image
 
 
 import os
@@ -41,10 +43,13 @@ def process_image(rdd):
         print('No message')
         print("-------------------------------------------")
     else:
-        print('Message:', rdd.map(lambda x: Image.open(BytesIO(x[1]))))
+        message = rdd.map(lambda x: (x[0], x[1]))
+        print('Message:', message[0])
+        images = rdd.map(lambda x: Image.open(BytesIO(message[1])))
+        print('Image opened')
 """
     # Декодируем бинарные данные в изображение
-    images = rdd.map(lambda x: Image.open(BytesIO(x[1])))
+    
 
     # Преобразуем изображение в формат jpg
     jpg_image = images.map(lambda img: img.convert('RGB'))
