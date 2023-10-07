@@ -1,0 +1,4 @@
+pyspark
+torch
+opencv-python
+kafka-python
