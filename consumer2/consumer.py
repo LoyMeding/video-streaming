@@ -38,14 +38,14 @@ start_time = time.time()
 
 def process_image(rdd):
     # Если RDD пустое, то игнорируем
-    if rdd.isEmpty():
+    if rdd.count() == 0:
         print("-------------------------------------------")
         print('No message')
         print("-------------------------------------------")
     else:
-        message = rdd.map(lambda x: (x[0], x[1]))
-        print('Message:', message[0])
-        images = rdd.map(lambda x: Image.open(BytesIO(message[1])))
+        #message = rdd.map(lambda x: (x[0], x[1]))
+        #print('Message:', message[0])
+        images = rdd.map(lambda x: Image.open(BytesIO(x[1])))
         print('Image opened')
 """
     # Декодируем бинарные данные в изображение
