@@ -4,10 +4,10 @@ from pyspark.context import SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 from io import BytesIO
-from PIL import Image
-
-
 import os
+import cv2
+import numpy as np
+
 os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.0.2 pyspark-shell'
 
 # Создаем SparkContext
@@ -29,24 +29,35 @@ topic = ['detect-video']
 kafka_stream = KafkaUtils.createDirectStream(ssc, topic, kafka_params)
 
 # Загрузить модель YOLOv7
-#model = torch.hub.load('WongKinYiu/yolov7', 'custom', path='yolov7-tiny.pt', trust_repo=True)
+# model = torch.hub.load('WongKinYiu/yolov7', 'custom', path='yolov7-tiny.pt', trust_repo=True)
 
 # Создаём счётчики кадров и времени
 frames_count = 0
 start_time = time.time()
 
 
-def process_image(rdd):
-    # Если RDD пустое, то игнорируем
-    if rdd.count() == 0:
+def process_image(message):
+    if len(message) == 0:
         print("-------------------------------------------")
         print('No message')
         print("-------------------------------------------")
+    # Если RDD пустое, то игнорируем
+    # if message.count() == 0:
+
     else:
-        #message = rdd.map(lambda x: (x[0], x[1]))
-        #print('Message:', message[0])
-        images = rdd.map(lambda x: Image.open(BytesIO(x[1])))
-        print('Image opened')
+        # message = rdd.map(lambda x: (x[0], x[1]))
+        # print('Message:', message[0])
+        key = message[0]
+        image_bytes = message[1]
+
+        #images = message.map(lambda x: Image.open(BytesIO(x[1])))
+        # Декодирование байтового массива в изображение
+        image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+
+        # Вывод ключа в консоль
+        print("Ключ сообщения: ", key)
+
+
 """
     # Декодируем бинарные данные в изображение
     
@@ -73,9 +84,9 @@ def process_image(rdd):
 """
 
 # Обработка стрима
-kafka_stream.foreachRDD(process_image)
-
+# kafka_stream.foreachRDD(process_image)
+kafka_stream.foreachRDD(lambda rdd: rdd.foreach(process_image))
+kafka_stream.pprint()
 # Запуск Spark Streaming
 ssc.start()
 ssc.awaitTermination()
-
