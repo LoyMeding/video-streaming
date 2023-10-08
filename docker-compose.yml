@@ -51,13 +51,14 @@ services:
         ipv4_address: 172.25.0.13
 
   spark:
-    image: gettyimages/spark:2.4.1-hadoop-3.0
+    image: datamechanics/spark:3.1.2-latest
     container_name: spark
+    ports:
+      - "4040:4040"
+      - "8080:8080"
+      - "7077:7077"
     volumes:
       - ./:/app
-    networks:
-      kafkanet:
-        ipv4_address: 172.25.0.14
 
 networks:
   kafkanet:

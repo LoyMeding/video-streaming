@@ -18,7 +18,7 @@ ssc = StreamingContext(sc, 0.3)
 
 # Установка параметров Kafka
 kafka_params = {
-    "bootstrap.servers": "172.25.0.12:9092,172.25.0.13:9092",  # адрес и порт для подключения к Kafka broker'у
+    "bootstrap.servers": "localhost:9092",  # адрес и порт для подключения к Kafka broker'у
     "startingOffsets": "earliest"
 }
 
@@ -28,11 +28,10 @@ topic = ['detect-video']
 # Создание DStream для чтения из Kafka
 kafka_stream = KafkaUtils.createDirectStream(ssc, topic, kafka_params)
 
-
 # Загрузить модель YOLOv7
 # model = torch.hub.load('WongKinYiu/yolov7', path='yolov7-tiny.pt', trust_repo=True)
 # Загрузка модели
-model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+#model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 
 
 def process_image(message):
@@ -46,7 +45,9 @@ def process_image(message):
         start_time = time.process_time()
         # Открытие изображения из сообщения
         images = message.map(lambda x: x[1]).map(lambda x: Image.open(BytesIO(x)))
-        results = model(images)
+        # images = message.map(lambda x: x[1]).map(
+        # subprocess.call(['python', 'detect.py', '--source', '-', '--weights', 'yolov7.pt'], stdin=img_str)
+        # results = model(images)
         # Завершение обработки кадра
         end_time = time.process_time()
         # Вычисление времени обработки одного кадра
