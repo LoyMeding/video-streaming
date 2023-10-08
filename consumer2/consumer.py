@@ -86,8 +86,9 @@ def process_image(message):
 """
 
 # Обработка стрима
-# kafka_stream.foreachRDD(process_image)
-kafka_stream.foreachRDD(lambda rdd: rdd.foreach(process_image))
+kafka_stream.foreachRDD(process_image)
+#kafka_stream.foreachRDD(lambda rdd: rdd.foreach(process_image))
+kafka_stream.pprint()
 # Запуск Spark Streaming
 ssc.start()
 ssc.awaitTermination()
