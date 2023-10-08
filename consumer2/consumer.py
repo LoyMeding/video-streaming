@@ -47,9 +47,11 @@ def process_image(message):
     else:
         # message = rdd.map(lambda x: (x[0], x[1]))
         # print('Message:', message[0])
-        key = message[0]
-        image_bytes = message[1]
-        image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+        #key = message[0]
+        #image_bytes = message[1]
+        key = 1
+        image = 1
+        #image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
         # Вывод ключа в консоль
         if image is not None:
             print("-------------------------------------------")
