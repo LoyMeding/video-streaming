@@ -4,6 +4,7 @@ from pyspark.context import SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 from io import BytesIO
+from PIL import Image
 import os
 import cv2
 import numpy as np
@@ -31,10 +32,6 @@ kafka_stream = KafkaUtils.createDirectStream(ssc, topic, kafka_params)
 # Загрузить модель YOLOv7
 # model = torch.hub.load('WongKinYiu/yolov7', 'custom', path='yolov7-tiny.pt', trust_repo=True)
 
-# Создаём счётчики кадров и времени
-frames_count = 0
-start_time = time.time()
-
 
 def process_image(message):
     if message.count() == 0:
@@ -46,14 +43,14 @@ def process_image(message):
 
     else:
         # message = rdd.map(lambda x: (x[0], x[1]))
+        images = message.map(lambda x: x[1]).map(lambda x: Image.open(BytesIO(x)))
         # print('Message:', message[0])
         #key = message[0]
         #image_bytes = message[1]
         key = 1
-        image = 1
         #image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
         # Вывод ключа в консоль
-        if image is not None:
+        if images is not None:
             print("-------------------------------------------")
             print("Ключ сообщения: ", key)
             print("Изображение успешно открыто!")
