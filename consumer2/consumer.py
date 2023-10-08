@@ -49,15 +49,25 @@ def process_image(message):
         # print('Message:', message[0])
         key = message[0]
         image_bytes = message[1]
+        image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+        # Вывод ключа в консоль
+        if image is not None:
+            print("-------------------------------------------")
+            print("Ключ сообщения: ", key)
+            print("Изображение успешно открыто!")
+            print("-------------------------------------------")
+        else:
+            print("-------------------------------------------")
+            print("Ключ сообщения: ", key)
+            print("Не удалось открыть изображение.")
+            print("-------------------------------------------")
+
 
         #images = message.map(lambda x: Image.open(BytesIO(x[1])))
         # Декодирование байтового массива в изображение
-        image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
 
-        # Вывод ключа в консоль
-        print("-------------------------------------------")
-        print("Ключ сообщения: ", key)
-        print("-------------------------------------------")
+
+
 
 
 """
@@ -86,8 +96,8 @@ def process_image(message):
 """
 
 # Обработка стрима
-kafka_stream.foreachRDD(process_image)
-#kafka_stream.foreachRDD(lambda rdd: rdd.foreach(process_image))
+# kafka_stream.foreachRDD(process_image)
+kafka_stream.foreachRDD(lambda rdd: rdd.foreach(process_image))
 kafka_stream.pprint()
 # Запуск Spark Streaming
 ssc.start()
