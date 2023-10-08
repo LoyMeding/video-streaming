@@ -55,7 +55,9 @@ def process_image(message):
         image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
 
         # Вывод ключа в консоль
+        print("-------------------------------------------")
         print("Ключ сообщения: ", key)
+        print("-------------------------------------------")
 
 
 """
