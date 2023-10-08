@@ -6,7 +6,6 @@ from pyspark.streaming.kafka import KafkaUtils
 from io import BytesIO
 from PIL import Image
 import os
-import cv2
 import numpy as np
 
 os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.0.2 pyspark-shell'
@@ -34,26 +33,31 @@ kafka_stream = KafkaUtils.createDirectStream(ssc, topic, kafka_params)
 
 
 def process_image(message):
+    # Если RDD пустое, то игнорируем
     if message.count() == 0:
         print("-------------------------------------------")
         print('No message')
         print("-------------------------------------------")
-    # Если RDD пустое, то игнорируем
-    #
+
 
     else:
         # message = rdd.map(lambda x: (x[0], x[1]))
+        # Начало обработки кадра
+        start_time = time.process_time()
         images = message.map(lambda x: x[1]).map(lambda x: Image.open(BytesIO(x)))
-        # print('Message:', message[0])
-        #key = message[0]
-        #image_bytes = message[1]
+        # Завершение обработки кадра
+        end_time = time.process_time()
+        # Вычисление времени обработки одного кадра
+        processing_time = end_time - start_time
+        # Вычисление скорости обработки кадров в секунду
+        frames_per_second = round(1 / processing_time, 2)
         key = 1
-        #image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
         # Вывод ключа в консоль
         if images is not None:
             print("-------------------------------------------")
-            print("Ключ сообщения: ", key)
             print("Изображение успешно открыто!")
+            print("Время обработки одного кадра:", processing_time)
+            print("Скорость обработки кадров в секунду:", frames_per_second)
             print("-------------------------------------------")
         else:
             print("-------------------------------------------")
@@ -61,9 +65,6 @@ def process_image(message):
             print("Не удалось открыть изображение.")
             print("-------------------------------------------")
 
-
-        #images = message.map(lambda x: Image.open(BytesIO(x[1])))
-        # Декодирование байтового массива в изображение
 
 
 
@@ -95,9 +96,8 @@ def process_image(message):
 """
 
 # Обработка стрима
-# kafka_stream.foreachRDD(process_image)
 kafka_stream.foreachRDD(process_image)
-#kafka_stream.pprint()
+
 # Запуск Spark Streaming
 ssc.start()
 ssc.awaitTermination()
