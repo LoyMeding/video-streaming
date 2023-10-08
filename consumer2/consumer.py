@@ -18,7 +18,7 @@ ssc = StreamingContext(sc, 0.3)
 
 # Установка параметров Kafka
 kafka_params = {
-    "bootstrap.servers": "localhost:9092",  # адрес и порт для подключения к Kafka broker'у
+    "bootstrap.servers": "172.25.0.12:9092,172.25.0.13:9092",  # адрес и порт для подключения к Kafka broker'у
     "startingOffsets": "earliest"
 }
 

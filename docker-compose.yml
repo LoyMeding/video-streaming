@@ -51,7 +51,7 @@ services:
         ipv4_address: 172.25.0.13
 
   spark:
-    image: bitnami/spark:latest
+    image: bitnami/spark:3.5.0-debian-11-r9
     container_name: spark
     volumes:
       - ./:/app
