@@ -14,7 +14,7 @@ os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-streaming
 sc = SparkContext(appName="KafkaConsumer").getOrCreate()
 
 # Создаем StreamingContext с интервалом 2 секунды
-ssc = StreamingContext(sc, 0.2)
+ssc = StreamingContext(sc, 2)
 
 # Установка параметров Kafka
 kafka_params = {
