@@ -37,7 +37,7 @@ start_time = time.time()
 
 
 def process_image(message):
-    if message.count() == 0:
+    if len(message) == 0:
         print("-------------------------------------------")
         print('No message')
         print("-------------------------------------------")
