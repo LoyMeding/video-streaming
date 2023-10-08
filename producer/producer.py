@@ -28,9 +28,10 @@ def publish_video(video_file, topic, producer):
         # Перевод изображения в jpg
         ret, buffer = cv2.imencode('.jpg', frame)
         # Получение текущего времени в битовом представлении
-        time_bytes = bytes(str(time.time()), encoding='utf-8')
+        time_bytes = bytes(str(1), encoding='utf-8')
         # Перевод изображения в битовое представление и отправка в Kafka
-        image_bytes = buffer.tostring()
+        # image_bytes = buffer.tostring()
+        image_bytes = 1
         producer.send(topic, key=time_bytes, value=image_bytes)
         # producer.send(topic, key=time_bytes, value=buffer.tobytes())
         print("ret, buffer", ret, buffer)
