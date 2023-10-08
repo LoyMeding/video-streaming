@@ -14,7 +14,7 @@ os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-streaming
 sc = SparkContext(appName="KafkaConsumer").getOrCreate()
 
 # Создаем StreamingContext с интервалом 2 секунды
-ssc = StreamingContext(sc, 2)
+ssc = StreamingContext(sc, 0.3)
 
 # Установка параметров Kafka
 kafka_params = {
@@ -99,8 +99,8 @@ def process_image(message):
 
 # Обработка стрима
 # kafka_stream.foreachRDD(process_image)
-kafka_stream.foreachRDD(lambda rdd: rdd.foreach(process_image))
-kafka_stream.pprint()
+kafka_stream.foreachRDD(process_image)
+#kafka_stream.pprint()
 # Запуск Spark Streaming
 ssc.start()
 ssc.awaitTermination()
