@@ -28,8 +28,11 @@ topic = ['detect-video']
 # Создание DStream для чтения из Kafka
 kafka_stream = KafkaUtils.createDirectStream(ssc, topic, kafka_params)
 
+
 # Загрузить модель YOLOv7
-# model = torch.hub.load('WongKinYiu/yolov7', 'custom', path='yolov7-tiny.pt', trust_repo=True)
+# model = torch.hub.load('WongKinYiu/yolov7', path='yolov7-tiny.pt', trust_repo=True)
+# Загрузка модели
+model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 
 
 def process_image(message):
@@ -38,53 +41,34 @@ def process_image(message):
         print("-------------------------------------------")
         print('No message')
         print("-------------------------------------------")
-
-
     else:
-        # message = rdd.map(lambda x: (x[0], x[1]))
         # Начало обработки кадра
         start_time = time.process_time()
+        # Открытие изображения из сообщения
         images = message.map(lambda x: x[1]).map(lambda x: Image.open(BytesIO(x)))
+        results = model(images)
         # Завершение обработки кадра
         end_time = time.process_time()
         # Вычисление времени обработки одного кадра
-        processing_time = end_time - start_time
+        processing_time = round(end_time - start_time, 2)
         # Вычисление скорости обработки кадров в секунду
         frames_per_second = round(1 / processing_time, 2)
         key = 1
         # Вывод ключа в консоль
         if images is not None:
             print("-------------------------------------------")
-            print("Изображение успешно открыто!")
-            print("Время обработки одного кадра:", processing_time)
-            print("Скорость обработки кадров в секунду:", frames_per_second)
+            print("Successful image opening!")
+            print("Processing time of one frame:", processing_time)
+            print("FPS:", frames_per_second)
             print("-------------------------------------------")
         else:
             print("-------------------------------------------")
-            print("Ключ сообщения: ", key)
-            print("Не удалось открыть изображение.")
+            print("Image key: ", key)
+            print("Failed to open image.")
             print("-------------------------------------------")
 
 
-
-
-
-
 """
-    # Декодируем бинарные данные в изображение
-    
-
-    # Преобразуем изображение в формат jpg
-    jpg_image = images.map(lambda img: img.convert('RGB'))
-
-    # Применить модель к изображению
-    results = model(jpg_image)
-    # Посчитать FPS
-    frames_count += 1
-    end_time = time.time()
-    total_time = end_time - start_time
-    fps = frame_count / total_time
-
     # Вывести координаты ограничивающего прямоугольника, класс объекта и вероятность
     for i, det in enumerate(results.xyxy[0]):
         print("-------------------------------------------")
