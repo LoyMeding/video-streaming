@@ -1,0 +1,6 @@
+bootstrap_servers: "172.18.0.4:9092"
+topic: str: 'detect-video'
+video_file: 'http://185.137.146.14/mjpg/video.mjpg'
+num_partitions: 1
+replication_factor: 1
+validate_only: false
