@@ -1,0 +1,6 @@
+pyspark
+opencv-python
+kafka-python
+numpy
+torch
+ultralytics
