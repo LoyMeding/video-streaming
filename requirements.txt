@@ -1,5 +1,0 @@
-pyspark
-torch
-opencv-python
-kafka-python
-pillow
